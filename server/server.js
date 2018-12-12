@@ -23,16 +23,14 @@ app.post('/todos', (req, res) => {
 	todo.save()
 		.then(todo => {
 			console.log('Todo saved successfully!', todo);
-			res.status(200).send({
-				status: 'Success'
-			});
+			res.status(200).send(todo);
 		})
 		.catch(err => {
 			console.log('Unable to save todo.', err);
-			res.status(400).send({
-				status: 'Failed'
-			});
+			res.status(400).send(err);
 		});
 });
 
 app.listen(3000);
+
+module.exports.app = app;
