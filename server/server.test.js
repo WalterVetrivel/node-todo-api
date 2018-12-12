@@ -1,5 +1,8 @@
 const request = require('supertest');
 const expect = require('expect');
+const {
+	ObjectID
+} = require('mongodb');
 
 const {
 	app
@@ -12,8 +15,10 @@ const {
 } = require('../models/User');
 
 const todos = [{
+	_id: new ObjectID(),
 	text: 'First test todo'
 }, {
+	_id: new ObjectID(),
 	text: 'Second test todo'
 }]
 
@@ -86,5 +91,28 @@ describe('GET /todos', () => {
 				expect(res.body.todos.length).toBe(2);
 			})
 			.end(done)
+	});
+
+	it('should get todo by id', done => {
+		request(app)
+			.get(`/todos/${todos[0]._id}`)
+			.expect(res => {
+				expect(res.body._id).toBe(todos[0]._id.toString());
+			})
+			.end(done);
+	});
+
+	it('should get 404 if invalid ID is passed', done => {
+		request(app)
+			.get(`/todos/123`)
+			.expect(404)
+			.end(done);
+	});
+
+	it('should get 404 if non-existent ID is passed', done => {
+		request(app)
+			.get(`/todos/${new ObjectID()}`)
+			.expect(404)
+			.end(done);
 	});
 });
