@@ -41,7 +41,7 @@ describe('POST /todos', () => {
 			})
 			.expect(200)
 			.expect(res => {
-				expect(res.body.text).toBe(text);
+				expect(res.body.todo.text).toBe(text);
 			})
 			.end((err, res) => {
 				if (err) {
@@ -97,7 +97,7 @@ describe('GET /todos', () => {
 		request(app)
 			.get(`/todos/${todos[0]._id}`)
 			.expect(res => {
-				expect(res.body._id).toBe(todos[0]._id.toHexString());
+				expect(res.body.todo._id).toBe(todos[0]._id.toHexString());
 			})
 			.end(done);
 	});
@@ -122,9 +122,21 @@ describe('DELETE /todos', () => {
 		request(app)
 			.delete(`/todos/${todos[0]._id}`)
 			.expect(res => {
-				expect(res.body._id).toBe(todos[0]._id.toHexString());
+				expect(res.body.todo._id).toBe(todos[0]._id.toHexString());
 			})
-			.end(done);
+			.end((err, res) => {
+				if (err) {
+					return done(err);
+				}
+				Todo.findById(todos[0]._id)
+					.then(todo => {
+						expect(todo).toNotExist();
+						done();
+					})
+					.catch(err => {
+						done(err);
+					});
+			});
 	});
 
 	it('should get 404 if invalid ID is passed', done => {
@@ -139,5 +151,15 @@ describe('DELETE /todos', () => {
 			.delete(`/todos/${new ObjectID()}`)
 			.expect(404)
 			.end(done);
+	});
+});
+
+describe('PATCH /todos', () => {
+	it('should update todo by id', done => {
+		done();
+	});
+
+	it('should clear completedAt when todo is not completed', done => {
+		done();
 	});
 });
