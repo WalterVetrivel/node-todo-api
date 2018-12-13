@@ -97,7 +97,7 @@ describe('GET /todos', () => {
 		request(app)
 			.get(`/todos/${todos[0]._id}`)
 			.expect(res => {
-				expect(res.body._id).toBe(todos[0]._id.toString());
+				expect(res.body._id).toBe(todos[0]._id.toHexString());
 			})
 			.end(done);
 	});
@@ -112,6 +112,31 @@ describe('GET /todos', () => {
 	it('should get 404 if non-existent ID is passed', done => {
 		request(app)
 			.get(`/todos/${new ObjectID()}`)
+			.expect(404)
+			.end(done);
+	});
+});
+
+describe('DELETE /todos', () => {
+	it('should delete todo by id', done => {
+		request(app)
+			.delete(`/todos/${todos[0]._id}`)
+			.expect(res => {
+				expect(res.body._id).toBe(todos[0]._id.toHexString());
+			})
+			.end(done);
+	});
+
+	it('should get 404 if invalid ID is passed', done => {
+		request(app)
+			.delete(`/todos/123`)
+			.expect(404)
+			.end(done);
+	});
+
+	it('should get 404 if non-existent ID is passed', done => {
+		request(app)
+			.delete(`/todos/${new ObjectID()}`)
 			.expect(404)
 			.end(done);
 	});
